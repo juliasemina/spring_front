@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Form fields</title>
+</head>
+<body>
+<div th:fragment="form-fields(form)">
+
+    <div>
+        <label for="userIdInput"
+               class="form-label">UserId</label>
+        <input type="text" id="userIdInput" name="id"
+               class="form-control" th:value="*{id}"
+               disabled>
+    </div>
+
+    <div>
+        <label for="name" class="form-label">First
+            name</label>
+        <input type="text" name="name" id="name"
+               class="form-control" th:value="*{name}"
+               required th:disabled="${form=='delete'}">
+    </div>
+
+
+    <div>
+        <label for="surname" class="form-label">Last
+            name</label>
+        <input type="text" name="surname"
+               id="surname" class="form-control"
+               th:value="*{surname}" required th:disabled="${form=='delete'}">
+    </div>
+
+
+    <div>
+        <label for="age" class="form-label">Age</label>
+        <input type="text" name="age" id="age"
+               class="form-control" th:value="*{age}"
+               required th:disabled="${form=='delete'}">
+    </div>
+
+    <div>
+        <label for="email"
+               class="form-label">Email</label>
+        <input type="text" name="email"
+               id="email" class="form-control"
+               th:value="*{email}"
+               required th:disabled="${form=='delete'}">
+    </div>
+
+
+    <div>
+        <label for="pass"
+               class="form-label">Password</label>
+        <input type="password" name="pass"
+               id="pass" class="form-control" th:disabled="${form=='delete'}">
+    </div>
+
+
+    <div class="mb-3">
+
+        <label for="roleSelect"
+               class="form-label">Role</label>
+        <select id="roleSelect" name="allRoles" th:size="${listRoles.size()}"
+                class="form-select" multiple th:disabled="${form=='delete'}">
+            <option
+                    th:each="role : ${listRoles}"
+                    th:selected="${user.roles.contains(role)}"
+                    th:name="${role}"
+                    th:text="${role}">
+            </option>
+        </select>
+    </div>
+
+</div>
+</body>
+</html>

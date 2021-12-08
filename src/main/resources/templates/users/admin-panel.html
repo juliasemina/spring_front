@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="index, follow">
+    <title>Admin panel</title>
+    <!-- Bootstrap core CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+          integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://bootstrap5.ru/css/docs.css">
+
+
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
+
+    <meta name="theme-color" content="#7952b3">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+    <link href="../../static/css/admin-panel.css" th:href="@{/css/admin-panel.css}" rel="stylesheet"/>
+
+</head>
+
+<body>
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <p class="nav_caption"><span class="nav_text_bold" th:text="${currentUser.getEmail()}"/>
+        with roles:
+        <span class="nav_text_bold" th:text="${currentUser.getRolesToString()}"/></p>
+
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link nav_logout" href="/logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item">
+                        <a class="nav-link active" aria-current="page" data-toggle="tab" href="#admin-panel">
+                            <span data-feather="admin"></span>
+                            Admin
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#user-page">
+                            <span data-feather="user"></span>
+                            User
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 tab-content">
+
+
+            <!-- admin-panel----------------------------------------------------------------------------------------- -->
+            <div sec:authorize="hasRole('ROLE_ADMIN')" id="admin-panel" class="tab-pane in active">
+
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                    <h1 class="admin-panel">Admin panel</h1>
+                </div>
+
+                <!---вкладки на админ панели------------------------------------------------------------------------ -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" data-toggle="tab" href="#users-table">Users
+                            table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#new-user">New User</a>
+                    </li>
+                </ul>
+                <!-- ----------------------------таблица пользователей--------------------------- -->
+                <div class="tab-content">
+
+                    <div id="users-table" class="tab-pane in active">
+                        <h2 class="caption">All users</h2>
+                        <div class="table-container">
+
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <td th:text="Id"/>
+                                    <td th:text="Name"/>
+                                    <td th:text="LastName"/>
+                                    <td th:text="Age"/>
+                                    <td th:text="Email"/>
+                                    <td th:text="Role"/>
+                                    <td th:text="Edit"/>
+                                    <td th:text="Delete"/>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <th:block th:each="user : ${users}">
+                                    <tr>
+                                        <td th:text="${user.getId()}"/>
+                                        <td th:text="${user.getName()}"/>
+                                        <td th:text="${user.getSurname()}"/>
+                                        <td th:text="${user.age}"/>
+                                        <td th:text="${user.getEmail()}"/>
+                                        <td th:text="${user.getRolesToString()}"/>
+
+
+                                        <td>
+                                            <button th:attr="id=${user.getId()}"
+                                                    class="action-button edit-button"
+                                                    data-toggle="modal"
+                                                    data-target="#editModal"
+                                                    th:data-target="${'#editModal' + user.id}">Edit
+                                            </button>
+
+                                            <div class="modal fade" th:id="${'editModal' + user.id}" tabindex="-1"
+                                                 aria-labelledby="editModalLabel"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editModalLabel">Edit user</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form th:method="post"
+                                                                  th:action="@{/admin/update_user(id=${user.id})}"
+                                                                  th:object="${user}"
+                                                                  th:id="${'edit' + user.id}">
+
+                                                                <div th:include="/users/fragments/form-fields :: form-fields(form='edit')"></div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Close
+                                                            </button>
+                                                            <button type="submit"
+                                                                    th:form="${'edit' + user.id}"
+                                                                    class="btn btn-primary">Edit
+                                                            </button>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+
+                                            <button th:attr="id=${user.getId()}"
+                                                    class="action-button delete-button"
+                                                    data-toggle="modal"
+                                                    data-target="#deleteModal"
+                                                    th:data-target="${'#deleteModal' + user.id}">Delete
+                                            </button>
+
+                                            <div class="modal fade" th:id="${'deleteModal' + user.id}" tabindex="-1">
+
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Delete
+                                                                user</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form th:method="delete"
+                                                                  th:action="@{/admin/delete(id=${user.id})}"
+                                                                  th:object="${user}"
+                                                                  th:id="${'delete' + user.id}">
+
+                                                                <div th:include="/users/fragments/form-fields :: form-fields(form='delete')"></div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button"
+                                                                    class="btn btn-secondary action-button"
+                                                                    data-dismiss="modal">Close
+                                                            </button>
+                                                            <button type="submit"
+                                                                    th:form="${'delete' + user.id}"
+                                                                    class="btn btn-primary">Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </th:block>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="new-user" class="tab-pane fade">
+                        <div th:replace="/users/fragments/new-user :: new-user(newUser=${newUser})"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-page" class="tab-pane fade">
+                <div th:include="/users/fragments/user-page :: user-page(currentUser=${currentUser})"></div>
+            </div>
+        </main>
+
+    </div>
+</div>
+</body>
+
+</html>

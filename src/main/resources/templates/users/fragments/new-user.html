@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New User</title>
+</head>
+<body>
+<div th:fragment="new-user(newUser)">
+    <h2 class="caption">Add new user</h2>
+    <div class="table-container user-container">
+        <form th:method="post" th:action="@{/admin/update_user}" th:object="${newUser}">
+
+            <div>
+                <label for="name" class="form-label">First name</label>
+                <input type="text" th:field="*{name}" id="name" class="form-control"
+                       placeholder="First name" required>
+            </div>
+
+
+            <div>
+                <label for="surname" class="form-label">Last name</label>
+                <input type="text" th:field="*{surname}" id="surname" class="form-control"
+                       placeholder="Last name" required>
+            </div>
+
+
+            <div>
+                <label for="age" class="form-label">Age</label>
+                <input type="text" th:field="*{age}" id="age" class="form-control" placeholder="Age"
+                       required>
+            </div>
+
+            <div>
+                <label for="email" class="form-label">Email</label>
+                <input type="text" th:field="*{email}" id="email" class="form-control"
+                       placeholder="Email" required>
+            </div>
+
+            <div>
+                <label for="pass" class="form-label">Password</label>
+                <input type="password" th:field="*{pass}" id="pass" class="form-control"
+                       placeholder="Password">
+            </div>
+
+
+            <div class="mb-3">
+                <label for="roleSelect" class="form-label">Role</label>
+                <select class="form-select" id="roleSelect" name="roleSelect"
+                        th:size="${listRoles.size()}" multiple>
+                    <option
+                            th:each="role : ${listRoles}"
+                            th:selected="${role.getName().equals('ROLE_USER')}"
+                            th:name="${role}"
+                            th:text="${role}">
+                    </option>
+                </select>
+            </div>
+
+            <button class="btn btn-lg btn-primary btn-green" type="submit">Add new user</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

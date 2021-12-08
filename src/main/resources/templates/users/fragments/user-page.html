@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User page</title>
+</head>
+<body>
+<div th:fragment="user-page(currentUser)">
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+        <h1 class="admin-panel">User information-page</h1>
+    </div>
+
+    <h2 class="caption">About user</h2>
+    <div class="table-container">
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td th:text="Id"/>
+                <td th:text="Name"/>
+                <td th:text="LastName"/>
+                <td th:text="Age"/>
+                <td th:text="Email"/>
+                <td th:text="Role"/>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${currentUser.id}"/>
+                <td th:text="${currentUser.name}"/>
+                <td th:text="${currentUser.surname}"/>
+                <td th:text="${currentUser.age}"/>
+                <td th:text="${currentUser.email}"/>
+                <td th:text="${currentUser.getRolesToString()}"/>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+</body>
+</html>
