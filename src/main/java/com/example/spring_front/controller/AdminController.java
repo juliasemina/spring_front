@@ -51,6 +51,7 @@ public class AdminController {
 
     @PostMapping("admin/update_user")
     public String update_user(@ModelAttribute("user") User user, @RequestParam(value = "allRoles", required = false) String[] allRoles) {
+        System.out.println("allroles"+allRoles);
         if (allRoles != null) {
             Set<Role> roleSet = new HashSet<>();
             for (String roles : allRoles) {
